@@ -4,8 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:location/location.dart';
 
 import '../../repository/location_repository.dart';
-import '../current_weather.dart';
-import '../weather_forcast_screen.dart';
+import 'widget/current_weather.dart';
+import 'widget/weather_forcast_screen.dart';
 
 class WeatherScreen extends StatelessWidget {
   const WeatherScreen({super.key});

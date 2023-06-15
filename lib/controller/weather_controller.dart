@@ -1,9 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:location/location.dart';
+import 'package:riverpod_crud/repository/location_repository.dart';
+import 'package:riverpod_crud/repository/weather_repository.dart';
 
 import '../model/weather_model.dart';
-import '../repository/location_repository.dart';
-import '../repository/weather_repository.dart';
 
 class CurrentWeatherController extends StateNotifier<AsyncValue<WeatherModel>> {
   CurrentWeatherController(this._weatherRepository,
@@ -20,9 +19,17 @@ class CurrentWeatherController extends StateNotifier<AsyncValue<WeatherModel>> {
 
   Future<void> getWeather({required double lat, required double lon}) async {
     try {
+      if (!mounted) {
+        // Check if the widget is still mounted
+        return;
+      }
       state = const AsyncValue.loading();
 
       final weather = await _weatherRepository.getWeather(lat, lon);
+      if (!mounted) {
+        // Check if the widget is still mounted
+        return;
+      }
       state = AsyncValue.data(weather);
     } on Exception catch (e) {
       state = AsyncValue.error(e, StackTrace.current);

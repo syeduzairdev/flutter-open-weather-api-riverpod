@@ -2,9 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
-import '../constants/constant.dart';
-import '../model/weather_forcast.dart';
-import '../model/weather_model.dart';
+import 'package:riverpod_crud/constants/constant.dart';
+
+import '../../model/weather_forcast.dart';
+import '../../model/weather_model.dart';
 
 //WeatherRepository class, we define a getWeather method that sends an HTTP GET request to the weather API and returns the response data as a WeatherModel.
 class WeatherRepository {

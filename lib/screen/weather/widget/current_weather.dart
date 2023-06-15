@@ -2,30 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-
-import '../controller/weather_controller.dart';
+import 'package:riverpod_crud/controller/weather_controller.dart';
 
 class CurrentWeather extends ConsumerWidget {
   const CurrentWeather({super.key});
 
   /// add appropriete icon to page  according to response from API
-  String getWeatherIcon(int condition) {
-    if (condition < 300) {
-      return '🌩';
-    } else if (condition < 400) {
-      return '🌧';
-    } else if (condition < 600) {
-      return '☔️';
-    } else if (condition < 700) {
-      return '☃️';
-    } else if (condition < 800) {
-      return '🌫';
-    } else if (condition == 800) {
-      return '☀️';
-    } else if (condition <= 804) {
-      return '☁️';
+  getWeatherIcon(String condition) {
+    if (condition == "Clouds") {
+      return _buildWeatherImage("assets/images/png/cloud.png");
+    } else if (condition == "Rain") {
+      return _buildWeatherImage("assets/images/png/cloud_drizzle.png");
+    } else if (condition == "Snow") {
+      return _buildWeatherImage("assets/images/png/snow.png");
+    } else if (condition == "Clear") {
+      return _buildWeatherImage("assets/images/png/cloud_sunny.png");
+    } else if (condition == "Thunderstorm") {
+      return _buildWeatherImage("assets/images/png/flash.png");
+    } else if (condition == "Drizzle") {
+      return _buildWeatherImage("assets/images/png/cloud_lightning.png");
+    } else if (condition == "Haze") {
+      return _buildWeatherImage("assets/images/png/cloud_cross.png");
     } else {
-      return '🤷‍';
+      return _buildWeatherImage("assets/images/png/neuro_logo.png");
     }
   }
 
@@ -33,14 +32,14 @@ class CurrentWeather extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentWeather = ref.watch(currentWeatherControllerProvider);
     return currentWeather.when(
-     loading: () => const Center(
-          child: SizedBox(height: 20,  child: Text('Loading...'))),
-      data: (weatherModel) => buildCurrentWeather(weatherModel),
+      loading: () =>
+          const Center(child: SizedBox(height: 20, child: Text('Loading...'))),
+      data: (weatherModel) => buildCurrentWeather(weatherModel, ref),
       error: (error, stackTrace) => Center(child: Text(error.toString())),
     );
   }
 
-  buildCurrentWeather(weatherModel) {
+  buildCurrentWeather(weatherModel, WidgetRef ref) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -48,7 +47,7 @@ class CurrentWeather extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              DateFormat('EEEE').format(DateTime.now()),
+              'Today, ${DateFormat('EEEE').format(DateTime.now())}',
               style: TextStyle(
                 fontSize: 10.sp,
                 fontWeight: FontWeight.w400,
@@ -66,23 +65,19 @@ class CurrentWeather extends ConsumerWidget {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                Text(
-                    getWeatherIcon(
-                      weatherModel.weather![0].id!,
-                    ),
-                    style: const TextStyle(fontSize: 32)),
-
-                // //import svg
-                // SvgPicture.asset(
-                //   "assets/images/svg/cloudy_1.svg",
-                // ),
+                SizedBox(
+                  width: 6.w,
+                ),
+                getWeatherIcon(
+                  weatherModel.weather![0].main!,
+                )
               ],
             ),
             SizedBox(
               height: 6.h,
             ),
             Text(
-              "Hazy Sunshine",
+              '${weatherModel.weather![0].main}',
               style: TextStyle(
                 fontSize: 12.sp,
                 fontWeight: FontWeight.w600,
@@ -97,8 +92,11 @@ class CurrentWeather extends ConsumerWidget {
               children: [
                 Icon(
                   Icons.location_on,
-                  //  color: Pallete.primaryColor,
+                  color: Colors.black,
                   size: 16.sp,
+                ),
+                SizedBox(
+                  width: 6.w,
                 ),
                 Text(
                   '${weatherModel.name}',
@@ -132,6 +130,15 @@ class CurrentWeather extends ConsumerWidget {
           ],
         ),
       ],
+    );
+  }
+
+  _buildWeatherImage(String image) {
+    return Image(
+      image: AssetImage(image),
+      fit: BoxFit.cover,
+      height: 30.h,
+      width: 30.w,
     );
   }
 }
